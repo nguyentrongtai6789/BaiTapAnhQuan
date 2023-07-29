@@ -1,9 +1,8 @@
-package bai_4_category_product;
-
 import java.io.Serializable;
+import java.text.DecimalFormat;
 
-public class Product implements Serializable {
-    private static int idClass = 1;
+public class Product implements Serializable, Comparable<Product> {
+    public static int idClass = 1;
     private String name;
     private double price;
     private String manufacturer;
@@ -11,7 +10,7 @@ public class Product implements Serializable {
     private Category category;
     private int id;
     private int quantity;
-    private static final long seriaizable = 1234567l;
+    private static final long serializable = 1234567l;
     public Product() {
         this.id = idClass;
         idClass++;
@@ -93,13 +92,20 @@ public class Product implements Serializable {
 
     @Override
     public String toString() {
+        DecimalFormat decimalFormat = new DecimalFormat("###,###.##");
+        String formattedPrice = decimalFormat.format(price);
         return "Product{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", price=" + price +
+                ", price=" + formattedPrice +
                 ", manufacturer='" + manufacturer + '\'' +
                 ", description='" + description + '\'' +
                 ", category='" + category + '\'' +
                 '}';
+    }
+
+    @Override
+    public int compareTo(Product o) {
+        return (int) (- this.getPrice() + o.getPrice());
     }
 }

@@ -1,5 +1,3 @@
-package bai_4_category_product;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +19,7 @@ public class CategoryManage {
 
     public void writeCategoryListToFile(List<Category> categoryList) {
         try {
-            File file = new File("D:\\module2\\BaiTapAnhQuan\\BaiTapAnhQuanTuan2\\src\\bai_4_category_product\\Category");
+            File file = new File("D:\\module2\\BaiTapAnhQuan\\BaiTapAnhQuan\\src\\bai_4_category_product\\untitled\\src\\CategoryFile");
             FileOutputStream fileOutputStream = new FileOutputStream(file);
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
             objectOutputStream.writeObject(categoryList);
@@ -33,7 +31,7 @@ public class CategoryManage {
 
     public void readCategoryListFromFile() {
         try {
-            File file = new File("D:\\module2\\BaiTapAnhQuan\\BaiTapAnhQuanTuan2\\src\\bai_4_category_product\\Category");
+            File file = new File("D:\\module2\\BaiTapAnhQuan\\BaiTapAnhQuan\\src\\bai_4_category_product\\untitled\\src\\CategoryFile");
             FileInputStream fileInputStream = new FileInputStream(file);
             ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
             categoryList = (List<Category>) objectInputStream.readObject();
@@ -49,6 +47,7 @@ public class CategoryManage {
         for (int i = 0; i < categoryList.size(); i++) {
             System.out.println((i + 1) + ". " + categoryList.get(i));
         }
+        System.out.println("........................");
     }
 
     public void checkIdCategory(int id) throws Exception {
@@ -60,6 +59,9 @@ public class CategoryManage {
                 break;
             }
         }
+        if (id == 0) {
+            check = true;
+        }
         if (!check) {
             throw new Exception("Id không có trong danh sách.");
         }
@@ -70,17 +72,75 @@ public class CategoryManage {
         System.out.println("Nhập tên của danh mục mới: ");
         String name = scanner.nextLine();
         category.setName(name);
+        int maxID = 0;
+        for (Category category4 : categoryList) {
+            maxID = categoryList.get(0).getId();
+            if (category4.getId() > maxID) {
+                maxID = category4.getId();
+            }
+        }
+        maxID++;
+        Category.idCate = maxID;
+        category.setId(maxID);
         categoryList.add(category);
         writeCategoryListToFile(categoryList);
         System.out.println("Bạn đã thêm danh mục mới thành công.");
     }
 
-    public void editCategory() {
+    public void deleteCategory() {
+        int id = 0;
         while (true) {
-            int id;
+            if (CategoryManage.categoryList.isEmpty()) {
+                System.out.println("Danh sách danh mục trống, còn gì mà xoá.");
+                break;
+            }
+            try {
+                System.out.println("Nhập vào id của danh mục bạn muốn xoá:");
+                id = Integer.parseInt(scanner.nextLine());
+                CategoryManage categoryManage = new CategoryManage();
+                if (id == 0) {
+                    System.out.println("Danh mục có id = 0 là mặc định, không được phép xoá.");
+                    continue;
+                }
+                categoryManage.checkIdCategory(id);
+                for (Category category : categoryList) {
+                    if (category.getId() == id) {
+                        categoryList.remove(category);
+                        writeCategoryListToFile(categoryList);
+                        for (Product product : ProductManage.productList) {
+                            if (product.getCategory().getId() == id) {
+                                product.setCategory(new Category("Chưa cài đặt danh mục", 0));
+                                ProductManage productManage = new ProductManage();
+                                productManage.writeProductListToFile(ProductManage.productList);
+                            }
+                        }
+                        break;
+                    }
+                }
+                System.out.println("Đã xoá thành công danh mục.");
+                break;
+            } catch (NumberFormatException e) {
+                System.out.println("Kiểu dữ liệu nhập vào không đúng.");
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+
+    public void editCategory() {
+        int id = 0;
+        while (true) {
+            if (CategoryManage.categoryList.isEmpty()) {
+                System.out.println("Không có danh mục nào để sửa.");
+                break;
+            }
             try {
                 System.out.println("Nhập id của danh mục sản phẩm bạn muốn sửa: ");
                 id = Integer.parseInt(scanner.nextLine());
+                if (id == 0) {
+                    System.out.println("Danh mục có id = 0 là mặc định, không được phép thay đổi.");
+                    continue;
+                }
                 checkIdCategory(id);
                 for (Category category : categoryList) {
                     if (category.getId() == id) {
@@ -88,10 +148,18 @@ public class CategoryManage {
                         String name = scanner.nextLine();
                         category.setName(name);
                         writeCategoryListToFile(categoryList);
-                        System.out.println("Bạn đã sửa danh mục thành công.");
+                        for (Product product : ProductManage.productList) {
+                            if (product.getCategory().getId() == id) {
+                                product.setCategory(category);
+                                ProductManage productManage = new ProductManage();
+                                productManage.writeProductListToFile(ProductManage.productList);
+                            }
+                        }
                         break;
                     }
                 }
+
+                System.out.println("Bạn đã sửa danh mục thành công.");
                 break;
             } catch (NumberFormatException e) {
                 System.out.println("Kiểu dữ liệu nhập vào không đúng.");
