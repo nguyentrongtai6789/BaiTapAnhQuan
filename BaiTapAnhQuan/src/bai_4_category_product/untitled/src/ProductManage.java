@@ -385,6 +385,83 @@ public class ProductManage {
         }
     }
 
+    public void searchProductByPrice() {
+        double price;
+        while (true) {
+            try {
+                System.out.println("Nhập giá cúa sản phẩm bạn muốn tìm kiếm:");
+                price = Double.parseDouble(scanner.nextLine());
+                break;
+            } catch (NumberFormatException e) {
+                System.out.println("Dữ liệu nhập vào không đúng.");
+            }
+        }
+        if (productList.isEmpty()) {
+            System.out.println("Danh sách sản phẩm trống.");
+            System.out.println(".........................");
+        } else {
+            Collections.sort(productList);
+            boolean check = false;
+            for (Product product : productList) {
+                if (product.getPrice() == price) {
+                    check = true;
+                    break;
+                }
+            }
+            if (check) {
+                System.out.println("Sản phẩm có giá bạn đang tìm là:");
+                for (Product product : productList) {
+                    if (product.getPrice() == price) {
+                        System.out.println(product);
+                    }
+                }
+                System.out.println("...........................");
+            } else {
+                System.out.println("Không có sản phẩm nào có giá bằng giá bạn đang muốn tìm.");
+                System.out.println("...........................");
+            }
+            boolean check2 = false;
+            for (Product product : productList) {
+                if (product.getPrice() > price) {
+                    check2 = true;
+                    break;
+                }
+            }
+            if (check2) {
+                System.out.println("Sản phẩm có giá cao hơn giá bạn đang tìm là:");
+                for (Product product : productList) {
+                    if (product.getPrice() > price) {
+                        System.out.println(product);
+                    }
+                }
+                System.out.println("..........................");
+            } else {
+                System.out.println("Tất cả sản phẩm có giá thấp hơn hoặc bằng giá bạn đang tìm.");
+                System.out.println(".......................");
+            }
+            boolean check3 = false;
+            for (Product product : productList) {
+                if (product.getPrice() < price) {
+                    check3 = true;
+                    break;
+                }
+            }
+            if (check3) {
+                System.out.println("Sản phẩm có giá thấp hơn giá bạn đang tìm là:");
+                for (Product product : productList) {
+                    if (product.getPrice() < price) {
+                        System.out.println(product);
+                    }
+                }
+                System.out.println(".........................");
+            } else {
+                System.out.println("Tất cả sản phẩm có giá cao hơn hoặc bằng giá bạn đang tìm.");
+                System.out.println(".........................");
+            }
+        }
+    }
+
+
     public void displayAllProductByCategory() {
         while (true) {
             if (productList.isEmpty()) {
